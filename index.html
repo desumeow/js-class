@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Document</title>
+</head>
+<body>
+    <div class="width-container">
+        <h1 class="maket__h1">Магазин самых пиздатых фенов</h1>
+        <div class="catalog">
+            <div data-id='1' class="product">
+                <img src="./img/1.jpg" alt="фен" class="product__img">
+                <p class="product__description">Фен Goodhelper HD-F082 черный/красный [компактный, 800 Вт, шнур - 1 м]</p>
+                <span class="product__price">280 ₽</span>
+                <button class="product__buy-button">Купить</button>
+            </div>
+            <div data-id='2' class="product">
+                <img src="./img/2.jpg" alt="фен" class="product__img">
+                <p class="product__description">Фен Goodhelper HD-F083 белый/голубой [компактный, 800 Вт]</p>
+                <p class="product__price">399 ₽</p>
+                <button class="product__buy-button">Купить</button>
+            </div>
+            <div data-id='3' class="product">
+                <img src="./img/4.jpg" alt="фен" class="product__img">
+                <p class="product__description">Фен DEXP BA-200 коричневый [компактный, 1000 Вт, шнур - 1.8 м]</p>
+                <p class="product__price">499 ₽</p>
+                <button class="product__buy-button">Купить</button>
+            </div>
+            <div data-id='4' class="product">
+                <img src="./img/3.jpg" alt="фен" class="product__img">
+                <p class="product__description">Фен DEXP HD-1000 фиолетовый/черный [компактный, 1000 Вт, шнур - 1.8 м]</p>
+                <p class="product__price">550 ₽</p>
+                <button class="product__buy-button">Купить</button>
+            </div>    
+        </div>
+        <div class="shopcart">
+            <h2 class="shopcart__title">Корзина</h2>
+            <div class="shopcart__itemlist">
+            </div>
+            <div class="shopcart__order">
+                <div class="shopcart__price-overall">Всего:</div>
+                <form class="discount__form">
+                Discount: <input id="discount" class="shopcart__discount" type="text" name="Discount"  pattern="^[0-9]+$"/>
+                <input  class="shopcart__discount-btn" type="button" value="Submit"/>
+                <span class="shopcart__discount-current">Текущая скидка: 0%</span>
+                </form>
+                <button class="shopcart__order-btn" onclick="buy()">Купить</button>
+
+            </div>
+        </div>
+    </div>
+    <script src="script_class.js"></script> 
+</body>
+</html>
