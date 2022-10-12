@@ -1,5 +1,5 @@
 const buy = () => {
-  alert('Поздравляем, Вы Д О Л Б О Ё Б!!!')
+  alert('Поздравляем с покупкой!')
 }
 
 class ShopCart{
@@ -14,6 +14,11 @@ class ShopCart{
     deleteItems = () => {
       const deleteElements = document.querySelector(".shopcart__itemlist");
       deleteElements.innerHTML = "";
+    }
+
+    discountCount = () => {
+      this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
+      this.totalPrice = this.totalPrice.toFixed(2)
     }
 
     validation = () => {
@@ -37,29 +42,18 @@ class ShopCart{
           this.discount = inputValue
           this.discountHidden = 100 - this.discount
           currentDiscount.textContent = `Текущая скидка: ${this.discount}%`
-          this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-          this.totalPrice = this.totalPrice.toFixed(2)
+          this.discountCount()
           this.render(this.products)
         };
       })
     }
-
-    makeElement = (tagName, className, text) => {
-      let element = document.createElement(tagName);
-      element.classList.add(className);
-      if (text) {
-        element.textContent = text;
-      }
-      return element;
-    };  
 
     deleteProduct = () => {
       const product = event.target.closest('.shopcart__item')
       this.products.some(element => {
         if (element.id === product.dataset.id) {
           this.totalPriceHidden -= element.price * element.count
-          this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-          this.totalPrice = this.totalPrice.toFixed(2)
+          this.discountCount()
         }
       })
       this.products = this.products.filter(n => n.id !== product.dataset.id);
@@ -72,8 +66,7 @@ class ShopCart{
         if (element.id === product.dataset.id) {
           element.count += 1
           this.totalPriceHidden += element.price
-          this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-          this.totalPrice = this.totalPrice.toFixed(2)
+          this.discountCount()
         }
       })
       this.render(this.products)
@@ -85,8 +78,7 @@ class ShopCart{
         if (element.id === product.dataset.id) {
           element.count -= 1
           this.totalPriceHidden -= element.price
-          this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-          this.totalPrice = this.totalPrice.toFixed(2)
+          this.discountCount()
         }
         if (element.count <= 0) {
           this.products = this.products.filter(n => n.id !== product.dataset.id);
@@ -96,51 +88,41 @@ class ShopCart{
     }
 
     createCard = (product) => {
-      let shopcartItem = this.makeElement('div', 'shopcart__item')
-      shopcartItem.dataset['id'] = product.id
+      const shopcart = document.querySelector(".shopcart__itemlist")
+      const template = `
+      <div id="${product.id}" class="shopcart__item" data-id="${product.id}">
+        <img class="shopcart__item-img" src="${product.img}">
+          <p class="shopcart__item-desc">${product.description}</p>
+          <div class="shopcart__item-quantity-cntrl">
+            <button class="shopcart__item-btn-minus">-</button>
+            <span class="shopcart__item-quantity">Количество: ${product.count}</span>
+            <button class="shopcart__item-btn-plus">+</button>
+            <button class="shopcart__item-delete">X</button>
+            <span class="shopcart__item-price">Цена: ${product.price * product.count} ₽</span>
+          </div>
+      </div>`
 
-      let shopcartImg = this.makeElement('img', 'shopcart__item-img')
-      shopcartImg.src = product.img
-      shopcartItem.append(shopcartImg);
+      shopcart.insertAdjacentHTML('beforeend', template);
 
-      let shopcartDesc = this.makeElement('p', 'shopcart__item-desc', product.description)
-      shopcartItem.append(shopcartDesc);
-      
-      let shopcartItemQu = this.makeElement('div', 'shopcart__item-quantity-cntrl')
-  
-      let minusButton = this.makeElement('button', 'shopcart__item-btn-minus', '-')
+      const card = document.getElementById(`${product.id}`)
+
+      let minusButton = card.querySelector('.shopcart__item-btn-minus')
       minusButton.addEventListener("click", this.minusCount, false);
-      shopcartItemQu.append(minusButton)
 
-      let shopQuantity = this.makeElement('span', 'shopcart__item-quantity', `Количество: ${product.count}`)
-      shopcartItemQu.append(shopQuantity)
-      
-      let plusButton = this.makeElement('button', 'shopcart__item-btn-plus', '+')
+      let plusButton = card.querySelector('.shopcart__item-btn-plus')
       plusButton.addEventListener("click", this.addCount, false);
-      shopcartItemQu.append(plusButton)
 
-      let cancelButton = this.makeElement('button', 'shopcart__item-delete', 'X')
-      cancelButton.addEventListener("click", this.deleteProduct, false);
-      shopcartItemQu.append(cancelButton)
-
-      let price = this.makeElement('span', 'shopcart__item-price', `Цена: ${product.price * product.count} ₽`)
-      shopcartItemQu.append(price)
-      shopcartItem.append(shopcartItemQu)
-
-      return shopcartItem;
+      let deleteButton = card.querySelector('.shopcart__item-delete')
+      deleteButton.addEventListener("click", this.deleteProduct, false);
     };
 
     render = (prod) => {
       this.deleteItems()
-      const shopcartMain = document.querySelector('.shopcart__itemlist')
       const shopcartTotalPrice = document.querySelector('.shopcart__price-overall')
       shopcartTotalPrice.textContent = `Всего: ${this.totalPrice} ₽`
-      for (let i = 0; i < prod.length; i++) {
-        let cartItem = this.createCard(prod[i])
-        shopcartMain.append(cartItem)
-      }
+      prod.forEach(element => this.createCard(element))
     };
-    
+
     addProduct = () => {
       document.onclick = (event) => {
         if (event.target.classList.contains('product__buy-button')){
@@ -149,8 +131,7 @@ class ShopCart{
                 if (element.id === product.dataset.id) {
                   element.count += 1
                   this.totalPriceHidden += element.price
-                  this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-                  this.totalPrice = this.totalPrice.toFixed(2)
+                  this.discountCount()
                   return true
                 }
                 return false
@@ -164,8 +145,7 @@ class ShopCart{
                   img: product.querySelector('.product__img').src
                 }
                 this.totalPriceHidden += productObj.price * productObj.count
-                this.totalPrice = this.totalPriceHidden / 100 * this.discountHidden
-                this.totalPrice = this.totalPrice.toFixed(2)
+                this.discountCount()
                 this.products.push(productObj)
               }
             this.render(this.products)
@@ -173,7 +153,6 @@ class ShopCart{
         }
     };
     
-
 };
 
 let cart = new ShopCart()
